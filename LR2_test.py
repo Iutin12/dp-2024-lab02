@@ -23,7 +23,7 @@ class TestLogger(unittest.TestCase):
         self.assertIn("INFO", output)
         self.assertIn("Тестовое сообщение в консоль", output)
 
-        def test_file_logging(self):
+    def test_file_logging(self):
         """ Тестируем логирование в файл """
         with patch('builtins.open', new_callable=MagicMock) as mock_open:
             mock_file = MagicMock()
