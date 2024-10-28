@@ -1,33 +1,26 @@
-from contextlib import redirect_stdout
-from LR2 import Logger, ConsoleLogStrategy, FileLogStrategy
+
 import unittest
-import os
-from io import StringIO
+from unittest.mock import MagicMock, patch
+import io
+from LR2 import Logger, ConsoleLogStrategy, FileLogStrategy, UpperFileLogStrategy
 
 
 class TestLogger(unittest.TestCase):
 
     def setUp(self):
-        """Настройка тестов, создаем временные директории и файлы."""
-        self.test_dir = "test_logs"
-        os.makedirs(self.test_dir, exist_ok=True)
+        # Создаем экземпляр Logger перед каждым тестом
+        self.logger = Logger()
 
-    def tearDown(self):
-        """Очистка после тестов."""
-        for file in os.listdir(self.test_dir):
-            os.remove(os.path.join(self.test_dir, file))
-        os.rmdir(self.test_dir)
+    @patch('sys.stdout', new_callable=io.StringIO)
+    def test_console_logging(self, mock_stdout):
+        # Тестируем логирование в консоль
+        strategy = ConsoleLogStrategy()
+        self.logger.info("Тестовое сообщение в консоль", strategy)
 
-    def test_console_logging(self):
-        """Тестирование логирования в консоль."""
-        logger = Logger(ConsoleLogStrategy())
-
-        with StringIO() as buf, redirect_stdout(buf):
-            for i in range(3):
-                logger.info(f"Тестовое сообщение {i + 1}")
-            output = buf.getvalue()
-
-        self.assertEqual(output.count("Тестовое сообщение"), 3)
+        output = mock_stdout.getvalue()
+        # Проверяем, что вывод содержит нужные строки
+        self.assertIn("INFO", output)
+        self.assertIn("Тестовое сообщение в консоль", output)
 
     def test_file_logging_creation(self):
         """Тестирование создания файла логов."""
