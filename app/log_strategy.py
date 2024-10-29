@@ -1,19 +1,7 @@
 import pathlib
-from abc import ABC, abstractmethod
+from app.writer import Writer
 
-class Writer(ABC):
-    """
-    Абстрактный класс для выбора стратегий логирования
-    """
-
-    @abstractmethod
-    def log(self, message: str) -> None:
-        """
-        Записывает сообщение
-        """
-        pass
-
-class ConsoleLogStrategy(Writer):
+class ConsoleWriter(Writer):
     """
     Стратегия для логирования в консоль
     """
@@ -24,7 +12,7 @@ class ConsoleLogStrategy(Writer):
         """
         print(message)
 
-class FileLogStrategy(Writer):
+class FileWriter(Writer):
     """
     Стратегия для логирования в файл
     """
@@ -42,7 +30,7 @@ class FileLogStrategy(Writer):
         with open(self.file_path, 'a', encoding='utf-8') as file:
             file.write(message + '\n')
 
-class UpperFileLogStrategy(FileLogStrategy):
+class UpperFileWriter(FileWriter):
     """
     Стратегия для логирования в файл в верхнем регистре
     """
