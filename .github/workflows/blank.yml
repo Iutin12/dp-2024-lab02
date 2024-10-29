@@ -2,7 +2,7 @@ name: Python application
 
 on:
   pull_request:
-    branches: [ "feature" ]
+    branches: [ "main" ]
 
 permissions:
   contents: read
