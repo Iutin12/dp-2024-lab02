@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 import io
-from app.log_strategy import ConsoleLogStrategy, FileLogStrategy, UpperFileLogStrategy
+from app.log_strategy import ConsoleWriter, FileWriter, UpperFileWriter
 from app.logger import Logger
 
 class TestLogger(unittest.TestCase):
@@ -9,12 +9,12 @@ class TestLogger(unittest.TestCase):
     def setUp(self):
         """Создаем экземпляр Logger перед каждым тестом."""
         self.log_file_path = 'dummy_path.log'  # Путь к файлу для тестов
-        self.logger = Logger(FileLogStrategy(self.log_file_path))
+        self.logger = Logger(FileWriter(self.log_file_path))
 
     @patch('sys.stdout', new_callable=io.StringIO)
     def test_console_logging(self, mock_stdout):
         """Тестируем логирование в консоль."""
-        self.logger.set_writer(ConsoleLogStrategy())
+        self.logger.set_writer(ConsoleWriter())
         self.logger.info("Тестовое сообщение в консоль")
 
         output = mock_stdout.getvalue()
@@ -42,7 +42,7 @@ class TestLogger(unittest.TestCase):
             mock_file = MagicMock()
             mock_open.return_value.__enter__.return_value = mock_file
 
-            self.logger.set_writer(UpperFileLogStrategy(self.log_file_path))
+            self.logger.set_writer(UpperFileWriter(self.log_file_path))
             self.logger.info("Тестовое сообщение с верхним регистром")
 
             mock_open.assert_called_once_with(self.log_file_path, 'a', encoding='utf-8')
